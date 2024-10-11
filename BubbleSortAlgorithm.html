@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Visualization</title>
+    <script type="text/javascript">
+        var parent;
+        var timeout = 500;
+        var index = 0;
+        var actions = [];
+        
+        function bubblesort(array) {
+            actions = []; // Reset actions for new input
+            actions.push(array.slice(0)); // Save initial state
+            for (i = 0; i < array.length; i++) {
+                for (j = 0; j < array.length - 1; j++) {
+                    if (array[j] > array[j + 1]) {
+                        var temp = array[j + 1];
+                        array[j + 1] = array[j];
+                        array[j] = temp;
+                        actions.push(array.slice(0)); // Save state after each swap
+                    }
+                }
+            }
+            index = 0;
+            show(); // Display sorting process
+            return array.slice(0); // Return sorted array
+        }
+
+        function show() {
+            generate(actions[index]); // Show current array state
+            index = index + 1;
+            if (index < actions.length) {
+                setTimeout(show, timeout); // Continue showing until done
+            }
+        }
+
+        function init(array) {
+            parent = document.getElementById('display').children[0];
+            generate(array); // Show initial array
+            bubblesort(array); // Start sorting
+        }
+
+        function generate(array) {
+            if (array === undefined) return;
+            while (parent.firstChild) parent.removeChild(parent.firstChild); // Clear previous display
+            for (i = 0; i < array.length; i++) {
+                if (array[i] !== undefined) {
+                    var item = document.createElement('td');
+                    item.innerHTML = array[i];
+                    item.style.textAlign = 'center';
+                    item.style.backgroundColor = getRandomColor(); // Assign random color to each cell
+                    parent.appendChild(item); // Append each sorted value to the table
+                }
+            }
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function runSorting() {
+            var inputArray = document.getElementById('array').value.replace(/\s/g, '').split(',').map(parseFloat);
+            if (inputArray.length > 0) {
+                init(inputArray);
+            }
+        }
+    </script>
+    <style type="text/css">
+        body {
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #wrapper {
+            width: 900px;
+            margin: 0 auto;
+        }
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .scroll-container {
+            max-height: 200px; /* Fixed height to limit the size of the result display */
+            overflow-y: auto; /* Enable vertical scroll */
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 20px; /* More padding to create larger cells */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .sorting {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <label>Database (editable): 
+            <input type="text" id="array" value="9, 4, -135, 78, 6, 89, -132, 3.141592653589793, 45, 0, 27, 78, 67, 12" />
+        </label>
+        <br />
+        <button onclick="runSorting()">Run Sorting</button>
+        
+        <!-- Scrollable result container -->
+        <div class="scroll-container">
+            <table id="display">
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
